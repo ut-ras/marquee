@@ -14,7 +14,7 @@
 static void ShiftSelect(tShifter *sh, int n) {
     int i;
     
-    for (i = 0; i < sh->rowcount; i++) {
+    for (i = 0; i < sh->height; i++) {
         if ((i == n) == (!sh->invert))
             SetPinZ(sh->rows[i]);
         else
@@ -32,29 +32,16 @@ void InitShift(tShifter *sh) {
 }
 
 void ShiftUpdate(tShifter *sh) {
-    const char *f = sh->format;
+    int i;
     const unsigned char *d = sh->data;
     
     // Clear things here to keep artifacts from appearing
     ShiftSelect(sh, -1);
     
-    sh->active = (sh->active + 1) % sh->rowcount;
-    
-    while (*f != 0) {
-        switch (*f++) {
-            case '1':
-                SetPin(sh->dline, 1);
-                break;
-            case '0':
-                SetPin(sh->dline, 0);
-                break;
-            case 'd':
-                SetPin(sh->dline, (*d++) & (1 << sh->active));
-                break;
-            default:
-                continue;
-        }
-        
+    sh->active = (sh->active + 1) % sh->height;
+   
+    for (i = 0; i < sh->width; i++) {
+        SetPin(sh->dline, (*d++) & (1 << sh->active));
         SetPin(sh->clk, true);
         SetPin(sh->clk, false);
     }
@@ -65,7 +52,7 @@ void ShiftUpdate(tShifter *sh) {
 }
 
 void ShiftRunUS(tShifter *sh, tTime us) {
-    CallEveryUS(ShiftUpdate, sh, us/sh->rowcount);
+    CallEveryUS(ShiftUpdate, sh, us/sh->height);
 }
 
 void ShiftRun(tShifter *sh, float s) {

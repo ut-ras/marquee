@@ -39,7 +39,7 @@ CFLAGS += -mthumb
 CFLAGS += -mcpu=cortex-m4
 CFLAGS += -mfpu=fpv4-sp-d16
 CFLAGS += -mfloat-abi=softfp
-CFLAGS += -O0
+CFLAGS += -O2
 CFLAGS += -ffunction-sections
 CFLAGS += -fdata-sections
 CFLAGS += -MD

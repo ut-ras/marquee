@@ -12,12 +12,6 @@ void heartbeat(void) {
     blink_on = !blink_on;
 }
 
-
-const char format[] = "dddddddd dddddddd dddddddd"
-                      "dddddddd dddddddd dddddddd"
-                      "dddddddd dddddddd dddddddd"
-                      "dddddddd dddddddd dddddddd";
-
 unsigned char data[] = { 
     0 ,1 ,2 ,3 , 4 ,5 ,6 , 7, 8 ,9 ,10,11, 
     12,13,14,15, 16,17,18,19, 20,21,22,23,
@@ -33,10 +27,13 @@ tPin rows[7] = { PIN_A4, PIN_A3, PIN_A2, PIN_D6, PIN_D7, PIN_A6, PIN_A5 };
 
 tShifter sh = {
     PIN_B7, PIN_E0, PIN_B2,
-    7, rows, true,
-    format, data
+    7, 96, rows, true, data
 };
 
+
+#define BUFFER_WIDTH 256
+int buffer_index = 0;
+char buffer[BUFFER_WIDTH];
 
 // The 'main' function is the entry point of the program
 int main(void) {
@@ -45,6 +42,16 @@ int main(void) {
     InitDisplay(&sh);
     
     while (1) {
-        Display(&sh, "abcdefghijklmnopqrstuvwx");
+        char c = (char)Getc();
+
+        if (buffer_index == 0 && c != '=')
+            continue;
+
+        if (c == '\r') {
+            Display(&sh, buffer_index-1, buffer+1);
+            buffer_index = 0;
+        } else {
+            buffer[buffer_index++] = c;
+        }
     }
 }

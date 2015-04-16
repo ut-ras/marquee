@@ -10,11 +10,11 @@ typedef struct Shifter {
     tPin clk;
     tPin strobe;
     
-    int rowcount;
+    int height;
+    int width;
     const tPin *rows;
     tBoolean invert;
     
-    const char *format;
     unsigned char *data;
     
     int active;
