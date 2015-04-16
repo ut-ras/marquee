@@ -4,18 +4,14 @@
 #include <RASLib/inc/adc.h>
 
 #include "shifter.h"
+#include "display.h"
 
-// Blink the LED to show we're on
-tBoolean blink_on = true;
-
-void blink(void) {
+void heartbeat(void) {
+    static int blink_on = true;
     SetPin(PIN_F3, blink_on);
     blink_on = !blink_on;
 }
 
-tShifter sh;
-
-tPin rows[7] = { PIN_A4, PIN_A3, PIN_A2, PIN_D6, PIN_D7, PIN_A6, PIN_A5 };
 
 const char format[] = "dddddddd dddddddd dddddddd"
                       "dddddddd dddddddd dddddddd"
@@ -33,68 +29,22 @@ unsigned char data[] = {
     84,85,86,87, 88,89,90,91, 92,93,94,95,
 };
 
-tADC *aud0;
-tADC *aud1;
+tPin rows[7] = { PIN_A4, PIN_A3, PIN_A2, PIN_D6, PIN_D7, PIN_A6, PIN_A5 };
 
+tShifter sh = {
+    PIN_B7, PIN_E0, PIN_B2,
+    7, rows, true,
+    format, data
+};
 
-void hi(tADC *adc) {
-    int i = 0;
-    
-    ShiftUpdate(&sh);
-    
-    sh.data += 1;
-    
-    //for (i = 0; i < (8*3*4)-1; i++) {
-    //    data[i] = data[i+1];
-    //}
-    
-    //Printf("hi %f\n", (ADCRead(adc) - ADCRead(adc)));
-    //data[8*3*4-1] = 1 << (unsigned char)(7 * (100 * (ADCRead(adc) + ADCRead(adc))));
-}
 
 // The 'main' function is the entry point of the program
 int main(void) {
     // Initialization code can go here
-    //CallEvery(blink, 0, 0.5);
+    CallEvery(heartbeat, 0, 1.0f);
+    InitDisplay(&sh);
     
-    sh.dline = PIN_B7;
-    sh.clk = PIN_E0;
-    sh.strobe = PIN_B2;
-    
-    sh.rowcount = 7;
-    sh.rows = rows;
-    sh.invert = true;
-    
-    sh.format = format;
-    sh.data = data;
-    
-    InitShift(&sh);
-    
-    
-    aud0 = InitializeADC(PIN_D0);
-    aud1 = InitializeADC(PIN_D1);
-    
-    CallEvery(hi, 0, (1.0f/50.0f) / 7);
-    
-    //ADCBackgroundRead(aud0, hi, aud0);
-    
-    //ShiftRun(&sh, (1.0f / 60.0f));
-    
-    //Printf("Hello World!\n");
-    
-    { while (1) {
-        //hi(aud0);
-        
-        
-        //{int i = 0; while (i < 100000) i++;}
-        //Wait(1.0f/30.0f);
-        
-        // Runtime code can go here
-        //ShiftUpdate(&sh);
-        //Printf("Hello World!\n");
-        //{ volatile int i = 0;
-        //  for (; i < 10000; i++);
-        //}
-        //WaitUS(1000);
-    } }
+    while (1) {
+        Display(&sh, "abcdefghijklmnopqrstuvwx");
+    }
 }

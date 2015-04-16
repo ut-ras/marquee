@@ -2,6 +2,9 @@
 #include <RASLib/inc/gpio.h>
 #include <RASLib/inc/time.h>
 
+#ifndef SHIFTER_H
+#define SHIFTER_H
+
 typedef struct Shifter {
     tPin dline;
     tPin clk;
@@ -12,7 +15,7 @@ typedef struct Shifter {
     tBoolean invert;
     
     const char *format;
-    const unsigned char *data;
+    unsigned char *data;
     
     int active;
 } tShifter;
@@ -25,3 +28,5 @@ void ShiftUpdate(tShifter *sh);
 void ShiftRunUS(tShifter *sh, tTime us);
 
 void ShiftRun(tShifter *sh, float s);
+
+#endif
