@@ -47,7 +47,7 @@ int main(void) {
         if (buffer_index == 0 && c != '=')
             continue;
 
-        if (c == '\r') {
+        if (c == '\r' || buffer_index == BUFFER_WIDTH-1) {
             Display(&sh, buffer_index-1, buffer+1);
             buffer_index = 0;
         } else {
