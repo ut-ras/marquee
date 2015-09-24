@@ -40,6 +40,9 @@ int main(void) {
     // Initialization code can go here
     CallEvery(heartbeat, 0, 1.0f);
     InitDisplay(&sh);
+
+    sh.cb = (void (*)(void *))DisplayUpdate;
+    sh.cb_data = &sh;
     
     while (1) {
         char c = (char)Getc();

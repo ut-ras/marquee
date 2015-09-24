@@ -18,6 +18,8 @@ typedef struct Shifter {
     unsigned char *data;
     
     int active;
+    void (*cb)(void *);
+    void *cb_data;
 } tShifter;
 
 

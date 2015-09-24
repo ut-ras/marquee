@@ -9,8 +9,6 @@
 #include <StellarisWare/driverlib/sysctl.h>
 
 
-
-
 static void ShiftSelect(tShifter *sh, int n) {
     int i;
     
@@ -23,7 +21,14 @@ static void ShiftSelect(tShifter *sh, int n) {
 }
 
 void InitShift(tShifter *sh) {
+    int i;
+
     sh->active = -1;
+
+    for (i = 0; i < sh->height; i++) {
+        GPIOPadConfigSet(PORT_VAL(sh->rows[i]), PIN_VAL(sh->rows[i]), 
+                         GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD);
+    }
     
     ShiftSelect(sh, -1);
     SetPin(sh->dline, false);
@@ -49,6 +54,9 @@ void ShiftUpdate(tShifter *sh) {
     SetPin(sh->strobe, true);
     SetPin(sh->strobe, false);
     ShiftSelect(sh, sh->active);
+
+    if (sh->cb && sh->active == sh->height-1)
+        sh->cb(sh->cb_data);
 }
 
 void ShiftRunUS(tShifter *sh, tTime us) {

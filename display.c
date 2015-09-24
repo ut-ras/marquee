@@ -29,8 +29,7 @@ void DisplayUpdate(tShifter *sh) {
 
 void InitDisplay(tShifter *sh) {
     InitShift(sh);
-    ShiftRun(sh, (1.0f/45.0f));
-    CallEvery(DisplayUpdate, sh, (5.0f/45.0f));
+    ShiftRun(sh, (1.0f/62.5f));
 }
 
 void Display(tShifter *sh, int l, const char *m) {
@@ -42,3 +41,10 @@ void Display(tShifter *sh, int l, const char *m) {
         message[len++] = ' ';
 }
 
+void DisplayRunUS(tShifter *sh, tTime us) {
+    CallEveryUS(DisplayUpdate, sh, us);
+}
+
+void DisplayRun(tShifter *sh, float s) {
+    DisplayRunUS(sh, US(s));
+}
