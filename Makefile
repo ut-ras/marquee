@@ -1,8 +1,8 @@
-# Makefile for RASWare 2013
-TARGET = RASTemplate.axf
+# Makefile for Marquee
+TARGET = Marquee.axf
 
 # Library Locations
-STELLARIS = ../StellarisWare
+STELLARIS = /usr/local/lib/StellarisWare
 RASLIB = ../Rasware/RASLib
 CORTEXM4 = ../CortexM4Libs
 ARMCLIB = $(dir $(shell which $(CC)))..
@@ -52,8 +52,12 @@ LDFLAGS += --entry ResetHandler
 LDFLAGS += --gc-sections
 LDFLAGS += --no-check-sections
 
+# This shouldn't vary per platform but if you try to use Cygwin you might have problems. No promises.
+lib-search-dirs = $(shell ${CC} ${CFLAGS} -print-search-dirs | grep libraries | sed -e "s/libraries:\ =/-L'/" -e "s/ /\\\ /" -e "s/:/' -L'/g" -e "s/$$/'/")
+
 CFLAGS += $(addprefix -I, $(INC))
 LDFLAGS += $(addprefix -L, $(LDDIR))
+LDFLAGS += ${lib-search-dirs}
 LDFLAGS += $(addprefix -l, $(LIB))
 
 -include $(OBJECTS:.o=.d)
