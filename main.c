@@ -32,8 +32,9 @@ tShifter sh = {
 
 
 #define BUFFER_WIDTH 256
-int buffer_index = 0;
-char buffer[BUFFER_WIDTH];
+int buffer_index = 23;
+char buffer[BUFFER_WIDTH] = "    Welcome to IEEE RAS!";
+
 
 // The 'main' function is the entry point of the program
 int main(void) {
@@ -43,18 +44,20 @@ int main(void) {
 
     sh.cb = (void (*)(void *))DisplayUpdate;
     sh.cb_data = &sh;
+
+    Display(&sh, buffer_index, buffer+1);
+    buffer_index = 1;
+
     
     while (1) {
         char c = (char)Getc();
+        Printf("%c", c);
 
-        if (buffer_index == 0 && c != '=')
-            continue;
-
-        if (c == '\r' || buffer_index == BUFFER_WIDTH-1) {
+        if ( c > 126 || c < 32 || buffer_index == BUFFER_WIDTH-1) {
+            Printf("Sequence complete!\n");
             Display(&sh, buffer_index-1, buffer+1);
-            buffer_index = 0;
-        } else {
+            buffer_index = 1;
+        } else
             buffer[buffer_index++] = c;
-        }
     }
 }
