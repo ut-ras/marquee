@@ -60,7 +60,7 @@ void ShiftUpdate(tShifter *sh) {
 }
 
 void ShiftRunUS(tShifter *sh, tTime us) {
-    CallEveryUS(ShiftUpdate, sh, us/sh->height);
+    CallEveryUS(ShiftUpdate, sh, us/sh->height*1.4); //mess with the constant to change scroll speed
 }
 
 void ShiftRun(tShifter *sh, float s) {
