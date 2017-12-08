@@ -9,7 +9,7 @@ import requests
 URL = "https://slack.com/api/channels.history"
 
 # parameters
-token = "N4auS4A2lhcsHyHfE1ftzPKI"
+token = "xoxp-7065433170-134502887458-284553027734-612eedd09632bb8c04f8d7cb765d59b1"
 channel = ""
 count = "10"
 inclusive = "true"
