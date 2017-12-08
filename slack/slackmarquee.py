@@ -3,6 +3,8 @@
 # importing the requests library
 import requests
 import time
+import wiringpi
+
 
 # api-endpoint - get slack channel history
 # https://api.slack.com/methods/groups.history
@@ -17,15 +19,28 @@ marqueechannel = "G8B0PQMDE"
 inclusive = "true"
 unreads = "true"
 
-
+#serial port
+serial = 0
 
 def main():
+	init()
 	lastmessage = getLastMessage()
-	uartFromComputer(lastmessage)
+	uartFromPi(lastmessage)
 	time.sleep(1)
+	wiringpi.serialClose(serial)
 
-def uartFromComputer(message):
+
+# setup stuff
+def init():
+	global serial
+	serial = wiringpi.serialOpen('/dev/ttyAMA0', 9600)
+
+
+# send string over uart from pi to marquee
+def uartFromPi(message):
 	 print(message)
+	 wiringpi.serialPuts(serial, message)
+
 
 # get a number of most recent messages from the channel
 def getChannelHistory(count):
