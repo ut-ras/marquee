@@ -9,7 +9,7 @@ import time
 URL = "https://slack.com/api/groups.history"
 
 # token for marquee slack app
-token = "xoxp-7065433170-134502887458-284578847030-fb4c7fe7c1afa621d09b1dedb0c8e02d"
+token = ""
 # channel id for marquee slack channel
 marqueechannel = "G8B0PQMDE"
 
