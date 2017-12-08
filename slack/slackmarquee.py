@@ -2,33 +2,45 @@
 
 # importing the requests library
 import requests
+import time
 
-#https://api.slack.com/methods/channels.history
+# api-endpoint - get slack channel history
+# https://api.slack.com/methods/groups.history
+URL = "https://slack.com/api/groups.history"
 
-# api-endpoint
-URL = "https://slack.com/api/channels.history"
+# token for marquee slack app
+token = "xoxp-7065433170-134502887458-284578847030-fb4c7fe7c1afa621d09b1dedb0c8e02d"
+# channel id for marquee slack channel
+marqueechannel = "G8B0PQMDE"
 
-# parameters
-token = "xoxp-7065433170-134502887458-284553027734-612eedd09632bb8c04f8d7cb765d59b1"
-channel = ""
-count = "10"
+# parameters for message history
 inclusive = "true"
 unreads = "true"
 
-# defining a params dict for the parameters to be sent to the API
-PARAMS = {'token':token, 'channel':channel, 'count':count, 'inclusive':inclusive, 'unreads':unreads}
 
-while(1):
-    # sending get request and saving the response as response object
-    r = requests.get(url = URL, params = PARAMS)
 
-    # extracting data in json format - channel history last 10 messages
-    data = r.json()
+def main():
+	lastmessage = getLastMessage();
+	print(lastmessage)
 
-    # extract last message
-    lastmessage = data['results'][0]['messages']['text']
+	#TODO send lastmessage over UART to marquee
 
-    # printing the output
-    print(lastmessage)
+	time.sleep(1)
 
-    #TODO send over UART to marquee
+
+# get a number of most recent messages from the channel
+def getChannelHistory(count):
+	# defining a params dict for the parameters to be sent to the API
+	PARAMS = {'token':token, 'channel':marqueechannel, 'count':count, 'inclusive':inclusive, 'unreads':unreads}
+	# sending get request and saving the response as response object
+	r = requests.get(url = URL, params = PARAMS)
+	# extracting data in json format - channel history, count = num messages
+	data = r.json()
+	return data
+
+
+# extract last message from channel
+def getLastMessage():
+	data = getChannelHistory(1);
+	lastmessage = data['messages'][0]['text']
+	return lastmessage
