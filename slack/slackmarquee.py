@@ -3,7 +3,7 @@
 # importing the requests library
 import requests
 import time
-import wiringpi
+import wiringpi2 as wiringpi
 
 
 # api-endpoint - get slack channel history
