@@ -20,13 +20,12 @@ unreads = "true"
 
 
 def main():
-	lastmessage = getLastMessage();
-	print(lastmessage)
-
-	#TODO send lastmessage over UART to marquee
-
+	lastmessage = getLastMessage()
+	uartFromComputer(lastmessage)
 	time.sleep(1)
 
+def uartFromComputer(message):
+	 print(message)
 
 # get a number of most recent messages from the channel
 def getChannelHistory(count):
