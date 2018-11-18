@@ -42,6 +42,9 @@ int main(void) {
     CallEvery(heartbeat, 0, 1.0f);
     InitDisplay(&sh);
 
+    //For ESP8266 Connection - UART1 PB0 PB1
+    //tUART * uart1 = InitializeUARTModule(1, 115200);
+
     sh.cb = (void (*)(void *))DisplayUpdate;
     sh.cb_data = &sh;
 
@@ -51,6 +54,10 @@ int main(void) {
     
     while (1) {
         char c = (char)Getc();
+
+        //For ESP8266 Connection - read from UART1 instead of UART0, comment out Getc()
+        //char c = (char)fGetc(uart1);
+
         Printf("%c", c);
 
         if ( c > 126 || c < 32 || buffer_index == BUFFER_WIDTH-1) {
