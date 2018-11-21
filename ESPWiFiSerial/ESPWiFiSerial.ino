@@ -21,6 +21,7 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 
+#include "clock.h"
 
 
 /* WiFi Mode
@@ -28,11 +29,9 @@
  * AP = create a WiFi access point with  name ssid
  */
 #define WIFI_MODE "AP"
-
-
-//Soft AP
 const char * ssid = "RAS_Signboard";
-const char * pass = "demobotsrules";
+const char * pass = "esp";
+
 
 
 //Web Server at port 80
@@ -42,17 +41,33 @@ String webServerPath = "http://";
 ESP8266WebServer server(port);
 
 
+//Marquee Default Message
+String default_mssg = "Welcome to IEEE RAS!";
+
+
+//Marquee Current Info
+String current_mssg = default_mssg;
+boolean clock_display = false;      //turn the clock on, only do this if connected to WiFi and time sync
+int last_t = 0;         //for timing each minute to update display
+
+
+
 /* Setup Functions */
-void setupWiFi() {
-  if (String(WIFI_MODE).equals("AP")) {
+
+/* setupWiFi
+ * STA = connect to a WiFi network with name ssid
+ * AP = create a WiFi access point with  name ssid
+ */
+void setupWiFi(String mode, const char * _ssid, const char * _pass) {
+  if (mode.equals("AP")) {
     //Turn on Access Point
-    WiFi.softAP(ssid, pass);
+    WiFi.softAP(_ssid, _pass);
     ip = WiFi.softAPIP();
   }
   else {
     //Connect to a WiFi network
     WiFi.mode(WIFI_STA);
-    WiFi.begin(ssid, pass);
+    WiFi.begin(_ssid, _pass);
     while (WiFi.status() != WL_CONNECTED) {
       delay(500);
       yield();
@@ -77,23 +92,70 @@ void setupWebServer() {
 void setup() {
   Serial.begin(115200);
 
-  setupWiFi();
+  setupWiFi(WIFI_MODE, ssid, pass);
   setupWebServer();
-
-  //Serial.println("Access Point ssid = " + String(ssid) + ", pass = " + String(pass));
+  
+  //Serial.println("WiFi mode=" + String(WIFI_MODE) + ", ssid = " + String(ssid) + ", pass = " + String(pass));
   //Serial.println("Web server at " + webServerPath);
+
+  //only set clock_display on if in station mode
+  clock_display = String(WIFI_MODE).equals("STA");
+  if (clock_display) {
+    //Serial.println("Setting up time sync");
+    setupTime();
+
+    last_t = millis() - (1000 * getSecond() ) + 1000;    //so the minutes are updated 1 s after minute changes
+  }
+
+  //send default message
+  serialMarquee(default_mssg);
 }
 
 
 
-/* Handle a client connection */
 
+
+/* Main Loop - Handle a client connection */
 void loop() {
+  
+  //check the clock if its on
+  checkClock();
+  
   //handle web server
   server.handleClient();
+  
 }
 
 
+//marquee serial output format
+void serialMarquee(String mssg) {
+  //Check clock
+  if (clock_display && isTimeSync()) {
+    mssg = getClock() + " " + mssg;
+  }
+  
+  //Marquee must receive 25 characters for scrolling
+  while(mssg.length() < 26) {
+    mssg = mssg + " ";
+  }
+  mssg += "\n";
+  Serial.print(mssg);
+}
+
+//check if clock needs to be updated and resend current message
+void checkClock() {
+  if ((clock_display) && (millis() - last_t >= 1000 * 60)) {
+    last_t = millis();
+    serialMarquee(current_mssg);    
+    //String test_datetime = getClock() + " " + getDate(false, true);
+    //Serial.println(test_datetime);
+  }
+}
+
+
+
+
+/* Request Handlers */
 
 //main page
 void handleRoot() {
@@ -108,22 +170,11 @@ void handleSerial() {
   if(server.hasArg("serial_input")) {
     String serial_input = server.arg("serial_input");
     //Serial.println(serial_input);
-    serialMarquee(serial_input);
+    current_mssg = serial_input;
+    serialMarquee(current_mssg);
   }
   handleRoot();
 }
-
-//marquee serial output format
-void serialMarquee(String mssg) {
-  //Marquee must receive 25 characters for scrolling
-  while(mssg.length() < 26) {
-    mssg = mssg + " ";
-  }
-  mssg += "\n";
-  Serial.print(mssg);
-}
-
-
 
 
 
@@ -137,7 +188,7 @@ String indexHTML() {
               "<h1>RAS Marquee</h1>" +
               "<h2>ESP8266 Serial Tool</h2>" +
               "<form action=\"/serial\" method=\"post\">" +
-                "<input type=\"text\" name=\"serial_input\" value=\"Output to ESP8266 Serial\"><br>" +
+                "<input type=\"text\" name=\"serial_input\" placeholder=\"Output to ESP8266 Serial\"><br>" +
                 "<input type=\"submit\" value=\"Output Serial\"><br>" +
               "</form>" +
             "</body>";
