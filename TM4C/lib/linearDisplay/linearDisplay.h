@@ -11,6 +11,7 @@
  * @copyright Copyright (c) 2022
  * 
  */
+#pragma once
 
 #include <stdint.h>
 #include <lib/segment/segment.h>
@@ -20,16 +21,16 @@
 typedef struct LinearDisplayConfig {
     uint8_t numSegments;
     ShifterConfig_t shifterConfig;
-    GPIOPin_t rowPins[SEGMENT_ROWS];
     TimerConfig_t displayTimerConfig;
+    GPIOPin_t* rowPins[SEGMENT_ROWS];
 } LinearDisplayConfig_t;
 
 typedef struct LinearDisplay {
-    Segment_t* segments[];
+    Segment_t* segments;
     Timer_t displayTimer;
 } LinearDisplay_t;
 
-LinearDisplay_t LinearDisplayInit(void);
+LinearDisplay_t LinearDisplayInit(LinearDisplayConfig_t config);
 
 void LinearDisplayPushChar(LinearDisplay_t* display, char data);
 
@@ -43,4 +44,4 @@ void LinearDisplayStart(LinearDisplay_t* display);
 
 void LinearDisplayStop(LinearDisplay_t* display);
 
-void LinearDisplayChangeUpdateRate(LinearDisplay* display, uint32_t freq);
+void LinearDisplayChangeUpdateRate(LinearDisplay_t* display, uint32_t freq);

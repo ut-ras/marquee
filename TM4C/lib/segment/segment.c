@@ -14,16 +14,16 @@
 
 Segment_t SegmentInit(SegmentConfig_t config) {
     Segment_t segment = {
-        .segmentID  =config.segmentID,
-        .shifter    =ShifterInit(config.shifterConfig),
-        .rowPins    ={ PIN_COUNT },
-        .state      ={ false }
+        .segmentID  = config.segmentID,
+        .shifter    = ShifterInit(config.shifterConfig),
+        .rowPins    = { PIN_COUNT },
+        .state      = { false }
     };
 
     /* Initialize GPIO pins as digital outputs. */
     GPIOConfig_t pinConfig = {
         .pin=PIN_COUNT,
-        .GPIO_PULL=GPIO_PULL_DOWN,
+        .pull=GPIO_PULL_DOWN,
         .isOutput=true
     };
 
@@ -51,31 +51,30 @@ void SegmentClear(Segment_t* seg) {
 void SegmentPublish(Segment_t* seg) {
     /* Collapse rows into one "row". */
     bool columns[SEGMENT_COLUMNS] = { false };
-    for (uint8_t i = 0; i < SEGMENT_ROWS; ++i) {
-        for (uint8_t j = 0; j < SEGMENT_COLUMNS; ++j) {
-            if (seg->state[i][j]) {
-                columns[j] = true;
+    for (uint8_t col = 0; col < SEGMENT_COLUMNS; ++col) {
+        for (uint8_t row = 0; row < SEGMENT_ROWS; ++row) {
+            if (seg->state[row][col]) {
+                columns[col] = true;
                 break;
             }
         }
     }
 
-    /* Shift columns into the HCF4094BE. TODO: this can later be merged into
-       step one. */
+    /* Shift columns into the HCF4094BE. */
     uint64_t shiftData = 0;
     for (uint8_t i = 0; i < SEGMENT_COLUMNS && i < 64; ++i) {
         shiftData |= columns[i] << i;
     }
 
     /* Shift bits down the segment. */
-    ShifterShiftInMulti(shiftData, SEGMENT_COLUMNS);
+    ShifterShiftInMulti(&seg->shifter, shiftData, SEGMENT_COLUMNS);
 
     /* Collapse columns into one "column". */
     bool rows[SEGMENT_ROWS] = { false };
-    for (uint8_t i = 0; i < SEGMENT_COLUMNS; ++i) {
-        for (uint8_t j = 0; j < SEGMENT_ROWS; ++j) {
-            if (seg->state[j][i]) {
-                rows[j] = true;
+    for (uint8_t row = 0; row < SEGMENT_ROWS; ++row) {
+        for (uint8_t col = 0; col < SEGMENT_COLUMNS; ++col) {
+            if (seg->state[row][col]) {
+                rows[row] = true;
                 break;
             }
         }
@@ -83,6 +82,6 @@ void SegmentPublish(Segment_t* seg) {
 
     /* Turn on relevant row MOSFETs. */
     for (uint8_t i = 0; i < SEGMENT_ROWS; ++i) {
-        GPIOSetBit(rowPins[i], rows[i]);
+        GPIOSetBit(seg->rowPins[i], rows[i]);
     }
 }

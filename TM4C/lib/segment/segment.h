@@ -33,24 +33,47 @@
  * 
  * @copyright Copyright (c) 2022
  */
+#pragma once
+
 
 #include <stdbool.h>
 #include <stdint.h>
 #include <lib/GPIO/GPIO.h>
+#include <lib/shifter/shifter.h>
 
 #define SEGMENT_ROWS 14
 #define SEGMENT_COLUMNS 24
 
+
+/**
+ * @brief SegmentConfig_t is a user defined struct that specifies a segment
+ * configuration.
+ */
 typedef struct SegmentConfig {
+    /** @brief ID of the segment. */
     uint8_t segmentID;
+
+    /** @brief Pin configuration of the shifter. */
     ShifterConfig_t shifterConfig;
+
+    /** @brief Pin configuration of the transistor array. */
     GPIOPin_t rowPins[SEGMENT_ROWS];
 } SegmentConfig_t;
 
+/**
+ * @brief Segment_t is a struct containing used relevant data of the segment.
+ */
 typedef struct Segment {
+    /** @brief ID of the segment. */
     uint8_t segmentID;
+
+    /** @brief Pin configuration of the shifter. */
     Shifter_t shifter;
+
+    /** @brief Pin configuration of the transistor array. */
     GPIOPin_t rowPins[SEGMENT_ROWS];
+
+    /** @brief Virtual state of the segment. True means that the pixel is on. */
     bool state[SEGMENT_ROWS][SEGMENT_COLUMNS];
 } Segment_t;
 

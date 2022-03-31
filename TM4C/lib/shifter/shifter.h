@@ -13,22 +13,45 @@
  * @copyright Copyright (c) 2022
  * 
  */
+#pragma once
 
 #include <stdint.h>
 #include <stdbool.h>
 #include <lib/GPIO/GPIO.h>
 
+
+/**
+ * @brief ShifterConfig_t is a user defined struct that specifies a shifter
+ * configuration. 
+ */
 typedef struct ShifterConfig {
+    /** @brief GPIO used for clocking. */
     GPIOPin_t clockPin;
+
+    /** @brief GPIO used for capturing data. */
     GPIOPin_t strobePin;
+
+    /** @brief GPIO used for allowing outputs. */
     GPIOPin_t outputEnablePin;
+
+    /** @brief GPIO used for data. */
     GPIOPin_t dataPin;
 } ShifterConfig_t;
 
+/**
+ * @brief Shifter_t is a struct containing user relevant data of a shifter.
+ */
 typedef struct Shifter {
+    /** @brief GPIO used for clocking. */
     GPIOPin_t clockPin;
+    
+    /** @brief GPIO used for capturing data. */
     GPIOPin_t strobePin;
+
+    /** @brief GPIO used for allowing outputs. */
     GPIOPin_t outputEnablePin;
+
+    /** @brief GPIO used for data. */
     GPIOPin_t dataPin;
 } Shifter_t;
 

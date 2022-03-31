@@ -11,23 +11,15 @@
 
 #include <lib/shifter/shifter.h>
 
-#define ON(pin) (GPIOSetPin(pin, true);)
-#define DATA(pin, data) (GPIOSetPin(pin, data);)
-#define OFF(pin) (GPIOSetPin(pin, false);)
-
-void ShifterOutputOn(Shifter_t* shifter) {
-    GPIOSetPin(shifter->outputEnablePin, true);
-}
-
-void ShifterOutputOff(Shifter_t* shifter) {
-    GPIOSetPin(shifter->outputEnablePin, false);
-}
+#define ON(pin) (GPIOSetBit(pin, true))
+#define DATA(pin, data) (GPIOSetBit(pin, data))
+#define OFF(pin) (GPIOSetBit(pin, false))
 
 Shifter_t ShifterInit(ShifterConfig_t config) {
     /* Initialize GPIO pins as digital outputs. */
     GPIOConfig_t pinConfig = {
         .pin=PIN_COUNT,
-        .GPIO_PULL=GPIO_PULL_DOWN,
+        .pull=GPIO_PULL_DOWN,
         .isOutput=true
     };
     pinConfig.pin=config.clockPin;
@@ -46,26 +38,26 @@ Shifter_t ShifterInit(ShifterConfig_t config) {
         .strobePin=config.strobePin
     };
 
-    ON(shifter.outputEnablePin)
+    ON(shifter.outputEnablePin);
     return shifter;
 }
 
 void ShifterShiftIn(Shifter_t* shifter, bool data) {
-    ON(shifter->strobePin)
-    DATA(shifter->dataPin, data)
-    ON(shifter->clockPin)
-    OFF(shifter->clockPin)
-    OFF(shifter->strobePin)
+    ON(shifter->strobePin);
+    DATA(shifter->dataPin, data);
+    ON(shifter->clockPin);
+    OFF(shifter->clockPin);
+    OFF(shifter->strobePin);
 }
 
 void ShifterShiftInMulti(Shifter_t* shifter, uint64_t data, uint8_t count) {
-    ON(shifter->strobePin)
+    ON(shifter->strobePin);
 
     for (uint8_t i = 0; i < count; ++i) {
-        DATA(shifter->dataPin, (data >> count) & 0x1)
-        ON(shifter->clockPin)
-        OFF(shifter->clockPin)
+        DATA(shifter->dataPin, (data >> count) & 0x1);
+        ON(shifter->clockPin);
+        OFF(shifter->clockPin);
     }
 
-    OFF(shifter->strobePin)
+    OFF(shifter->strobePin);
 }
