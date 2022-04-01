@@ -1,3 +1,6 @@
 [submodule "TM4C/TM4C123Drivers"]
 	path = TM4C/TM4C123Drivers
 	url = https://github.com/dimembermatt/TM4C123Drivers.git
+[submodule "TM4C/inc/bdf2c"]
+	path = TM4C/inc/bdf2c
+	url = https://github.com/pixelmatix/bdf2c.git
