@@ -47,10 +47,10 @@ int main(void) {
     segment = SegmentInit(segmentConfig);
     uint8_t xDims = 5;
     for (uint8_t i = 0; i < xDims; ++i) {
-            SegmentSetPixel(&segment, i, i, 1);
-            SegmentSetPixel(&segment, i, xDims-i, 1);
+        SegmentSetPixel(&segment, i, i, 1);
+        SegmentSetPixel(&segment, i, xDims-i, 1);
     }
-    SegmentPublish(&segment);
+    SegmentStart(&segment);
 
     while (true) {
         

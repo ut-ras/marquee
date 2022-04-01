@@ -41,6 +41,7 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <lib/GPIO/GPIO.h>
+#include <lib/Timer/Timer.h>
 #include <lib/shifter/shifter.h>
 
 #define SEGMENT_ROWS 7
@@ -60,6 +61,12 @@ typedef struct SegmentConfig {
 
     /** @brief Pin configuration of the transistor array. */
     GPIOPin_t rowPins[SEGMENT_ROWS];
+
+    /** @brief Timer used to run the display. */
+    TimerID_t timerID;
+
+    /** @brief Frequency for the display refresh rate. */
+    uint32_t timerFreq;
 } SegmentConfig_t;
 
 /**
@@ -71,6 +78,9 @@ typedef struct Segment {
 
     /** @brief Pin configuration of the shifter. */
     Shifter_t shifter;
+
+    /** @brief Timer used to run the display. */
+    Timer_t timer;
 
     /** @brief Pin configuration of the transistor array. */
     GPIOPin_t rowPins[SEGMENT_ROWS];
@@ -106,11 +116,6 @@ void SegmentSetPixel(Segment_t* seg, uint8_t row, uint8_t column, bool state);
  */
 void SegmentClear(Segment_t* seg);
 
-/**
- * @brief SegmentPublish Publishes the virtual segment state data to a physical
- * segment of the marquee. This shifts data into the HCF4094BE shift registers
- * and turns on the row MOSFETs.
- * 
- * @param seg Segment to publish data for.
- */
-void SegmentPublish(Segment_t* seg);
+void SegmentStart(Segment_t* seg);
+
+void SegmentStop(Segment_t* seg);

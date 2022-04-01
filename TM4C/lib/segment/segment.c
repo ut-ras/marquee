@@ -12,6 +12,34 @@
 #include <lib/segment/segment.h>
 #include <lib/shifter/shifter.h>
 
+/**
+ * @brief SegmentPublish Publishes the virtual segment state data to a physical
+ * segment of the marquee. This shifts data into the HCF4094BE shift registers
+ * and turns on the row MOSFETs.
+ * 
+ * @param seg Segment to publish data for.
+ */
+void SegmentPublish(uint32_t* _) {
+    static uint8_t col = 0;
+
+    bool colOn = false;
+    /* Turn on relevant rows if found. */
+    for (uint8_t row = 0; row < SEGMENT_ROWS; ++row) {
+        if (seg->state[row][col]) {
+            GPIOSetBit(seg->rowPins[row], true);
+            colOn = true;
+        }
+    }
+    if (colOn) {
+        /* Shift only relevant column on. */
+        uint64_t shiftData = 1 << col;
+        /* Shift bits down the segment. */
+        ShifterShiftInMulti(&seg->shifter, shiftData, SEGMENT_COLUMNS);
+    }
+
+    col = (col + 1) % SEGMENT_COLUMNS;
+}
+
 Segment_t SegmentInit(SegmentConfig_t config) {
     Segment_t segment = {
         .segmentID  = config.segmentID,
@@ -19,6 +47,17 @@ Segment_t SegmentInit(SegmentConfig_t config) {
         .rowPins    = { PIN_COUNT },
         .state      = { false }
     };
+
+    TimerConfig_t timerConfig = {
+        .timerID=config.timerID,
+        .period=freqToPeriod(config.timerFreq, MAX_FREQ),
+        .timerTask=SegmentPublish,
+        .isPeriodic=true,
+        .priority=5,
+        .timerArgs=&segment
+    };
+
+    segment.timer = TimerInit(timerConfig);
 
     /* Initialize GPIO pins as digital outputs. */
     GPIOConfig_t pinConfig = {
@@ -48,40 +87,10 @@ void SegmentClear(Segment_t* seg) {
     }
 }
 
-void SegmentPublish(Segment_t* seg) {
-    /* Collapse rows into one "row". */
-    bool columns[SEGMENT_COLUMNS] = { false };
-    for (uint8_t col = 0; col < SEGMENT_COLUMNS; ++col) {
-        for (uint8_t row = 0; row < SEGMENT_ROWS; ++row) {
-            if (seg->state[row][col]) {
-                columns[col] = true;
-                break;
-            }
-        }
-    }
+void SegmentStart(Segment_t* seg) {
+    TimerStart(seg->timer);
+}
 
-    /* Shift columns into the HCF4094BE. */
-    uint64_t shiftData = 0;
-    for (uint8_t i = 0; i < SEGMENT_COLUMNS && i < 64; ++i) {
-        shiftData |= columns[i] << i;
-    }
-
-    /* Shift bits down the segment. */
-    ShifterShiftInMulti(&seg->shifter, shiftData, SEGMENT_COLUMNS);
-
-    /* Collapse columns into one "column". */
-    bool rows[SEGMENT_ROWS] = { false };
-    for (uint8_t row = 0; row < SEGMENT_ROWS; ++row) {
-        for (uint8_t col = 0; col < SEGMENT_COLUMNS; ++col) {
-            if (seg->state[row][col]) {
-                rows[row] = true;
-                break;
-            }
-        }
-    }
-
-    /* Turn on relevant row MOSFETs. */
-    for (uint8_t i = 0; i < SEGMENT_ROWS; ++i) {
-        GPIOSetBit(seg->rowPins[i], rows[i]);
-    }
+void SegmentStop(Segment_t* seg) {
+    TimerStop(seg->timer);
 }
