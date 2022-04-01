@@ -22,30 +22,23 @@
  */
 int main(void) {
     ShifterConfig_t shifterConfig = {
-        .clockPin=PIN_F0,
-        .strobePin=PIN_F1,
-        .outputEnablePin=PIN_F2,
-        .dataPin=PIN_F3
+        .clockPin=PIN_E0,
+        .strobePin=PIN_B2,
+        .outputEnablePin=PIN_B5, // HW FORCED HIGH
+        .dataPin=PIN_B7
     };
 
     SegmentConfig_t segmentConfig = {
         .segmentID = 0,
         .shifterConfig=shifterConfig,
         .rowPins={
-            PIN_A0, // Row 1
-            PIN_A1, // Row 2
-            PIN_A2, // Row 3
-            PIN_A3, // Row 4
-            PIN_A4, // Row 5
-            PIN_A0, // Row 6
-            PIN_A1, // Row 7
-            PIN_A2, // Row 8
-            PIN_A3, // Row 9
-            PIN_A4, // Row 10
-            PIN_A0, // Row 11
-            PIN_A1, // Row 12
-            PIN_A2, // Row 13
-            PIN_A3  // Row 14
+            PIN_A5, // Row 1
+            PIN_A6, // Row 2
+            PIN_D7, // Row 3
+            PIN_D6, // Row 4
+            PIN_A2, // Row 5
+            PIN_A3, // Row 6
+            PIN_A4, // Row 7
         }
     };
 
@@ -59,6 +52,8 @@ int main(void) {
     }
     SegmentPublish(&segment);
 
-    while (true);
+    while (true) {
+        
+    }
     return 1;
 }

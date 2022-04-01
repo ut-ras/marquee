@@ -3,7 +3,9 @@
  * @author Matthew Yu (matthewjkyu@gmail.com)
  * @brief A segment PCB of the marquee consists of 14 rows and 48 columns. Each
  * pair of columns is controlled by an output pin of ULN2003AN/ULN2803A
- * darlington driver, for a total of 4 driver ICs (12 columns per IC).
+ * darlington driver, for a total of 4 driver ICs (12 columns per IC). Each pair
+ * of rows is controlled by a transistor circuit, closing the circuit allows
+ * power to flow in.
  * 
  * As a quick explainer for the darlington driver:
  *  - If an input pin is HIGH, the corresponding output pin is LOW and sinks
@@ -22,7 +24,7 @@
  * is high, then a HV power source sends current through the row, providing that
  * the column is shorted to ground.
  * 
- * As such, LEDs can be lit up at a minimum resolution of 1x2, provided that the
+ * As such, LEDs can be lit up at a minimum resolution of 2x2, provided that the
  * row MOSFET and column darlington pair are activated, granting a closed
  * circuit path between HV and GND.
  * 
@@ -41,7 +43,7 @@
 #include <lib/GPIO/GPIO.h>
 #include <lib/shifter/shifter.h>
 
-#define SEGMENT_ROWS 14
+#define SEGMENT_ROWS 7
 #define SEGMENT_COLUMNS 24
 
 
