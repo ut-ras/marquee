@@ -15,6 +15,8 @@
 
 #include <lib/segment/segment.h>
 
+static Segment_t segment;
+
 /**
  * @brief 
  * 
@@ -42,13 +44,11 @@ int main(void) {
         }
     };
 
-    Segment_t segment = SegmentInit(segmentConfig);
+    segment = SegmentInit(segmentConfig);
     uint8_t xDims = 5;
     for (uint8_t i = 0; i < xDims; ++i) {
-        for (uint8_t j = 0; j < xDims; ++j) {
-            SegmentSetPixel(&segment, i, j, 1);
-            SegmentSetPixel(&segment, i, xDims-j, 1);
-        }
+            SegmentSetPixel(&segment, i, i, 1);
+            SegmentSetPixel(&segment, i, xDims-i, 1);
     }
     SegmentPublish(&segment);
 
