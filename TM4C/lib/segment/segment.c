@@ -19,45 +19,42 @@
  * 
  * @param seg Segment to publish data for.
  */
-void SegmentPublish(uint32_t* _) {
+void SegmentPublish(uint32_t* args) {
     static uint8_t col = 0;
 
     bool colOn = false;
     /* Turn on relevant rows if found. */
     for (uint8_t row = 0; row < SEGMENT_ROWS; ++row) {
-        if (seg->state[row][col]) {
-            GPIOSetBit(seg->rowPins[row], true);
+        if (((Segment_t*)args)->state[row][col]) {
+            GPIOSetBit(((Segment_t*)args)->rowPins[row], true);
             colOn = true;
-        }
+        } else {
+            GPIOSetBit(((Segment_t*)args)->rowPins[row], false);
+				}
     }
     if (colOn) {
         /* Shift only relevant column on. */
         uint64_t shiftData = 1 << col;
         /* Shift bits down the segment. */
-        ShifterShiftInMulti(&seg->shifter, shiftData, SEGMENT_COLUMNS);
+        ShifterShiftInMulti(&((Segment_t*)args)->shifter, shiftData, SEGMENT_COLUMNS);
     }
 
     col = (col + 1) % SEGMENT_COLUMNS;
 }
 
-Segment_t SegmentInit(SegmentConfig_t config) {
-    Segment_t segment = {
-        .segmentID  = config.segmentID,
-        .shifter    = ShifterInit(config.shifterConfig),
-        .rowPins    = { PIN_COUNT },
-        .state      = { false }
-    };
-
+void SegmentInit(SegmentConfig_t config, Segment_t* segment) {
     TimerConfig_t timerConfig = {
         .timerID=config.timerID,
         .period=freqToPeriod(config.timerFreq, MAX_FREQ),
         .timerTask=SegmentPublish,
         .isPeriodic=true,
         .priority=5,
-        .timerArgs=&segment
+        .timerArgs=(uint32_t*)segment
     };
-
-    segment.timer = TimerInit(timerConfig);
+		
+    segment->segmentID  = config.segmentID;
+    segment->shifter    = ShifterInit(config.shifterConfig);
+    segment->timer = TimerInit(timerConfig);
 
     /* Initialize GPIO pins as digital outputs. */
     GPIOConfig_t pinConfig = {
@@ -67,12 +64,18 @@ Segment_t SegmentInit(SegmentConfig_t config) {
     };
 
     for (uint8_t i = 0; i < SEGMENT_ROWS; ++i) {
-        segment.rowPins[i] = config.rowPins[i];
+        segment->rowPins[i] = config.rowPins[i];
         pinConfig.pin = config.rowPins[i];
         GPIOInit(pinConfig);
+				GPIOSetBit(pinConfig.pin, false);
     }
-
-    return segment;
+		
+		/* Clear state. */
+		for (uint8_t row = 0; row < SEGMENT_ROWS; ++row) {
+				for (uint8_t col = 0; col < SEGMENT_COLUMNS; ++col) {
+						segment->state[row][col] = false;
+				}
+		}
 }
 
 void SegmentSetPixel(Segment_t* seg, uint8_t row, uint8_t column, bool state) {

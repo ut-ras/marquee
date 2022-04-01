@@ -41,10 +41,12 @@ int main(void) {
             PIN_A2, // Row 5
             PIN_A3, // Row 6
             PIN_A4, // Row 7
-        }
+        },
+				.timerID=TIMER_0A,
+				.timerFreq=30
     };
 
-    segment = SegmentInit(segmentConfig);
+    SegmentInit(segmentConfig, &segment);
     uint8_t xDims = 5;
     for (uint8_t i = 0; i < xDims; ++i) {
         SegmentSetPixel(&segment, i, i, 1);

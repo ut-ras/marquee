@@ -94,9 +94,10 @@ typedef struct Segment {
  * pins. 
  * 
  * @param config Segment configuration.
+ * @param segment Reference to a segment to make.
  * @return Segment_t Virtual segment instance.
  */
-Segment_t SegmentInit(SegmentConfig_t config);
+void SegmentInit(SegmentConfig_t config, Segment_t* segment);
 
 /**
  * @brief SegmentSetPixel Sets a single pixel in the virtual state of the
