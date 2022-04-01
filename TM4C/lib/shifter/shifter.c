@@ -54,7 +54,7 @@ void ShifterShiftInMulti(Shifter_t* shifter, uint64_t data, uint8_t count) {
     ON(shifter->strobePin);
 
     for (uint8_t i = 0; i < count; ++i) {
-        DATA(shifter->dataPin, (data >> count) & 0x1);
+        DATA(shifter->dataPin, (data >> i) & 0x1);
         ON(shifter->clockPin);
         OFF(shifter->clockPin);
     }
