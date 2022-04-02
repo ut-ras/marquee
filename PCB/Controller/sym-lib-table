@@ -1,0 +1,6 @@
+(sym_lib_table
+  (lib (name "EK-TM4C123GXL")(type "KiCad")(uri "C:/Users/matth/Documents/Github/marquee/PCB/Library/Symbols/EK-TM4C123GXL.kicad_sym")(options "")(descr ""))
+  (lib (name "TM4C123GH6PMI")(type "KiCad")(uri "C:/Users/matth/Documents/Github/marquee/PCB/Library/Symbols/TM4C123GH6PMI.kicad_sym")(options "")(descr ""))
+  (lib (name "ESP8266-01_ESP-01")(type "KiCad")(uri "C:/Users/matth/Documents/Github/marquee/PCB/Library/Symbols/ESP8266-01_ESP-01.kicad_sym")(options "")(descr ""))
+  (lib (name "MJD6039")(type "KiCad")(uri "C:/Users/matth/Documents/Github/marquee/PCB/Library/Symbols/MJD6039.kicad_sym")(options "")(descr ""))
+)
