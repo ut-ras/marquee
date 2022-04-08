@@ -13,16 +13,26 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include <lib/PLL/PLL.h>
 #include <lib/segment/segment.h>
+#include <lib/Timer/Timer.h>
+
+/** 
+ * These function declarations are defined in the startup.s assembly file for
+ * managing interrupts. 
+ */
+void EnableInterrupts(void);    // Defined in startup.s
+void DisableInterrupts(void);   // Defined in startup.s
+void WaitForInterrupt(void);    // Defined in startup.s
+
 
 static Segment_t segment;
 
-/**
- * @brief 
- * 
- * @return int 
- */
 int main(void) {
+    PLLInit(BUS_80_MHZ);
+    DisableInterrupts();
+    DelayInit();
+    
     ShifterConfig_t shifterConfig = {
         .clockPin=PIN_E0,
         .strobePin=PIN_B2,
@@ -42,20 +52,33 @@ int main(void) {
             PIN_A3, // Row 6
             PIN_A4, // Row 7
         },
-				.timerID=TIMER_0A,
-				.timerFreq=30
+        .timerID=TIMER_0A,
+        .timerFreq=45
     };
 
     SegmentInit(segmentConfig, &segment);
-    uint8_t xDims = 5;
-    for (uint8_t i = 0; i < xDims; ++i) {
-        SegmentSetPixel(&segment, i, i, 1);
-        SegmentSetPixel(&segment, i, xDims-i, 1);
-    }
+
+    EnableInterrupts();
+
     SegmentStart(&segment);
 
+    uint8_t x = 0;
     while (true) {
-        
+        SegmentSetPixel(&segment, 0, (x+0)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 1, (x+1)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 2, (x+2)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 3, (x+3)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 4, (x+4)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 5, (x+5)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 6, (x+6)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 6, (x+0)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 5, (x+1)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 4, (x+2)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 2, (x+4)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 1, (x+5)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 0, (x+6)%SEGMENT_COLUMNS, 1);
+        x = (x+1) % SEGMENT_COLUMNS;
+        DelayMillisec(250);
+        SegmentClear(&segment);
     }
-    return 1;
 }

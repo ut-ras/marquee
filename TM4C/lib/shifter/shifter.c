@@ -37,7 +37,7 @@ Shifter_t ShifterInit(ShifterConfig_t config) {
         .outputEnablePin=config.outputEnablePin,
         .strobePin=config.strobePin
     };
-
+    
     ON(shifter.outputEnablePin);
     return shifter;
 }
