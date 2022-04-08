@@ -24,27 +24,34 @@ void LinearDisplayPushChar(LinearDisplay_t* display, char data) {
     //sizeof(bitmap[data-32])/sizeof(char) // is this the size of a single row of bitmap?
     uint8_t x = 0;
     for (int i = 0; i < sizeof(bitmap[data-32])/sizeof(char); i++){//for loop by row
-        if (bitmap[data-32][i]<<0>>7 == 1){
-            SegmentSetPixel(&(display->segments), i, (x+0)%SEGMENT_COLUMNS, 1);
-        }
-        if (bitmap[data-32][i]<<1>>7 == 1){
-            SegmentSetPixel(&(display->segments), i, (x+1)%SEGMENT_COLUMNS, 1);
-        }
-        if (bitmap[data-32][i]<<2>>7 == 1){
-            SegmentSetPixel(&(display->segments), i, (x+2)%SEGMENT_COLUMNS, 1);
-        }
-        if (bitmap[data-32][i]<<3>>7 == 1){
-            SegmentSetPixel(&(display->segments), i, (x+3)%SEGMENT_COLUMNS, 1);
-        }
-        if (bitmap[data-32][i]<<4>>7 == 1){
-            SegmentSetPixel(&(display->segments), i, (x+4)%SEGMENT_COLUMNS, 1);
-        }
-        if (bitmap[data-32][i]<<5>>7 == 1){
-            SegmentSetPixel(&(display->segments), i, (x+5)%SEGMENT_COLUMNS, 1);
-        }
-        if (bitmap[data-32][i]<<6>>7 == 1){
-            SegmentSetPixel(&(display->segments), i, (x+6)%SEGMENT_COLUMNS, 1);
-        }
+        SegmentSetPixel(&(display->segments), i, (x+0)%SEGMENT_COLUMNS, bitmap[data-32][i]&(0x40)>>6);
+        SegmentSetPixel(&(display->segments), i, (x+1)%SEGMENT_COLUMNS, bitmap[data-32][i]&(0x20)>>5);
+        SegmentSetPixel(&(display->segments), i, (x+2)%SEGMENT_COLUMNS, bitmap[data-32][i]&(0x10)>>4);
+        SegmentSetPixel(&(display->segments), i, (x+3)%SEGMENT_COLUMNS, bitmap[data-32][i]&(0x08)>>3);
+        SegmentSetPixel(&(display->segments), i, (x+4)%SEGMENT_COLUMNS, bitmap[data-32][i]&(0x04)>>2);
+        SegmentSetPixel(&(display->segments), i, (x+5)%SEGMENT_COLUMNS, bitmap[data-32][i]&(0x02)>>1);
+        SegmentSetPixel(&(display->segments), i, (x+6)%SEGMENT_COLUMNS, bitmap[data-32][i]&(0x01)>>0);
+        // if (bitmap[data-32][i]&(0x40) == 1){
+        //     SegmentSetPixel(&(display->segments), i, (x+0)%SEGMENT_COLUMNS, 1);
+        // }
+        // if (bitmap[data-32][i]&(0x20) == 1){
+        //     SegmentSetPixel(&(display->segments), i, (x+1)%SEGMENT_COLUMNS, 1);
+        // }
+        // if (bitmap[data-32][i]<<2>>7 == 1){
+        //     SegmentSetPixel(&(display->segments), i, (x+2)%SEGMENT_COLUMNS, 1);
+        // }
+        // if (bitmap[data-32][i]<<3>>7 == 1){
+        //     SegmentSetPixel(&(display->segments), i, (x+3)%SEGMENT_COLUMNS, 1);
+        // }
+        // if (bitmap[data-32][i]<<4>>7 == 1){
+        //     SegmentSetPixel(&(display->segments), i, (x+4)%SEGMENT_COLUMNS, 1);
+        // }
+        // if (bitmap[data-32][i]<<5>>7 == 1){
+        //     SegmentSetPixel(&(display->segments), i, (x+5)%SEGMENT_COLUMNS, 1);
+        // }
+        // if (bitmap[data-32][i]<<6>>7 == 1){
+        //     SegmentSetPixel(&(display->segments), i, (x+6)%SEGMENT_COLUMNS, 1);
+        // }
     }
     x = (x+1) % SEGMENT_COLUMNS;
     DelayMillisec(250);
