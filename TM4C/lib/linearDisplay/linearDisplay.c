@@ -59,7 +59,9 @@ void LinearDisplayPushChar(LinearDisplay_t* display, char data) {
 }
 
 void LinearDisplayPushString(LinearDisplay_t* display, char* data) {
-
+    for (int i = 0; data[i] != '\0'; i++){
+        LinearDisplayPushChar(display, data[i]);
+    }
 }
 
 /* TODO: support for 12x48 images. */
