@@ -31,6 +31,7 @@ char mapping[NUM_CHARS] = {
     112,113,114,115,116,
     117,118,119,120,121,
     122,123,124,125,126,
+    127,128,129,130,
 };
 char bitmap[NUM_CHARS][CHAR_SIZE] = {
     [0],
@@ -128,4 +129,8 @@ char bitmap[NUM_CHARS][CHAR_SIZE] = {
     [128, 128, 0, 128, 128],
     [192, 64, 32, 64, 192],
     [96, 192],
+    [0x0, 0x7F, 0x36, 0x36, 0x0, 0x20, 0x1C], //Sunglasses 127
+    [0x3E, 0x42, 0xDD, 0xDD, 0xC2, 0x5E, 0x76], //Amooguss 128
+    [0x0, 0x22, 0x22, 0x0, 0x1C, 0x22, 0x41], //Sad 129
+    [0x0, 0x22, 0x22, 0x0, 0x41, 0x22, 0x1C], //Smiley 130
 }
