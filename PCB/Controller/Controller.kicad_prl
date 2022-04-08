@@ -1,6 +1,6 @@
 {
   "board": {
-    "active_layer": 0,
+    "active_layer": 40,
     "active_layer_preset": "",
     "auto_track_width": false,
     "hidden_nets": [],
@@ -73,18 +73,6 @@
     "files": [
       {
         "name": "Controller.kicad_pcb",
-        "open": false,
-        "window": {
-          "display": 0,
-          "maximized": true,
-          "pos_x": -8,
-          "pos_y": -8,
-          "size_x": 1874,
-          "size_y": 1096
-        }
-      },
-      {
-        "name": "Controller.kicad_sch",
         "open": false,
         "window": {
           "display": 0,

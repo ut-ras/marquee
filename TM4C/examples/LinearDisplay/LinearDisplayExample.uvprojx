@@ -389,11 +389,6 @@
               <FilePath>..\..\lib\linearDisplay\linearDisplay.c</FilePath>
             </File>
             <File>
-              <FileName>font.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\lib\font\font.c</FilePath>
-            </File>
-            <File>
               <FileName>segment.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\lib\segment\segment.c</FilePath>
@@ -407,6 +402,16 @@
               <FileName>LinearDisplayExample.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\LinearDisplayExample.c</FilePath>
+            </File>
+            <File>
+              <FileName>tom-thumb_font.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\lib\font\tom-thumb_font.c</FilePath>
+            </File>
+            <File>
+              <FileName>emoji.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\lib\font\emoji.c</FilePath>
             </File>
           </Files>
         </Group>

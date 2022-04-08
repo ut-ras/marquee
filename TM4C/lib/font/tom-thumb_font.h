@@ -11,10 +11,10 @@
 
 #include <stdint.h>
 
-#define CHAR_WIDTH 3
+#define CHAR_WIDTH 4
 #define CHAR_HEIGHT 6
-#define CHAR_SIZE CHAR_WIDTH / 8 + 1 // in terms of bytes.
+#define CHAR_SIZE (CHAR_WIDTH / 8) + 1 // in terms of bytes.
 #define NUM_CHARS 95
 
 extern char mapping[NUM_CHARS];
-extern char bitmap[NUM_CHARS][CHAR_SIZE];
+extern char bitmap[NUM_CHARS][CHAR_HEIGHT];

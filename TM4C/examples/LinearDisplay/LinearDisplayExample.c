@@ -12,56 +12,61 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include <lib/linearDisplay/linearDisplay.h>
+#include <lib/PLL/PLL.h>
+#include <lib/Timer/Timer.h>
 
-/**
- * @brief 
- * 
- * @return int 
+/** 
+ * These function declarations are defined in the startup.s assembly file for
+ * managing interrupts. 
  */
+void EnableInterrupts(void);    // Defined in startup.s
+void DisableInterrupts(void);   // Defined in startup.s
+void WaitForInterrupt(void);    // Defined in startup.s
+void SegmentPublish(uint32_t* args);
+
+static LinearDisplay_t display;
+
 int main(void) {
+    PLLInit(BUS_80_MHZ);
+    DisableInterrupts();
+    DelayInit();
+    
     ShifterConfig_t shifterConfig = {
-        .clockPin=PIN_F0,
-        .strobePin=PIN_F1,
-        .outputEnablePin=PIN_F2,
-        .dataPin=PIN_F3
-    };
-
-    GPIOPin_t rowPins[SEGMENT_ROWS] = {
-        PIN_A0, // Row 1
-        PIN_A1, // Row 2
-        PIN_A2, // Row 3
-        PIN_A3, // Row 4
-        PIN_A4, // Row 5
-        PIN_A0, // Row 6
-        PIN_A1, // Row 7
-        PIN_A2, // Row 8
-        PIN_A3, // Row 9
-        PIN_A4, // Row 10
-        PIN_A0, // Row 11
-        PIN_A1, // Row 12
-        PIN_A2, // Row 13
-        PIN_A3  // Row 14
-    };
-
-    TimerConfig_t timerConfig = {
-        .timerID=TIMER_0A,
-        .period=freqToPeriod(1, MAX_FREQ),
-        .priority=5
+        .clockPin=PIN_E0,
+        .strobePin=PIN_B2,
+        .outputEnablePin=PIN_B5, // HW FORCED HIGH
+        .dataPin=PIN_B7
     };
 
     LinearDisplayConfig_t displayConfig = {
         .numSegments=1,
         .shifterConfig=shifterConfig,
-        .displayTimerConfig=timerConfig,
-        .rowPins=rowPins
+        .timerId=TIMER_0A,
+        .rowPins={
+            PIN_A5, // Row 1
+            PIN_A6, // Row 2
+            PIN_D7, // Row 3
+            PIN_D6, // Row 4
+            PIN_A2, // Row 5
+            PIN_A3, // Row 6
+            PIN_A4, // Row 7
+        }
     };
 
-    LinearDisplay_t LinearDisplayInit(displayConfig);
+    LinearDisplayInit(displayConfig, &display);
+
+    LinearDisplayPushString(&display, "HELLOWORLD", 10);
+
+
+    EnableInterrupts();
+    //LinearDisplayStart(&display);
 
     while (true) {
-
+        SegmentPublish((uint32_t*)&(display.segment));
+        DelayMicrosec(100);
     }
 
     return 1;

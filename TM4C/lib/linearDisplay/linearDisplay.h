@@ -18,24 +18,49 @@
 #include <lib/Timer/Timer.h>
 
 
+/**
+ * @brief Struct defining the configuration of a linear static display.
+ */
 typedef struct LinearDisplayConfig {
+    /* Number of segments to display. */
     uint8_t numSegments;
+
+    /* Pin configuration for the shifter. */
     ShifterConfig_t shifterConfig;
-    TimerConfig_t displayTimerConfig;
-    GPIOPin_t* rowPins[SEGMENT_ROWS];
+
+    /* Timer configuration for updating the display. */
+    TimerID_t timerId;
+
+    /* Pin configuration for rows. */
+    GPIOPin_t rowPins[SEGMENT_ROWS];
 } LinearDisplayConfig_t;
 
 typedef struct LinearDisplay {
-    Segment_t* segments;
+    /* Segment to display. */
+    Segment_t segment;
+
+    /* Timer controlling display operation. */
     Timer_t displayTimer;
 } LinearDisplay_t;
 
-LinearDisplay_t LinearDisplayInit(LinearDisplayConfig_t config);
+/**
+ * @brief 
+ * 
+ * @param config 
+ */
+void LinearDisplayInit(LinearDisplayConfig_t config, LinearDisplay_t* display);
 
-void LinearDisplayPushChar(LinearDisplay_t* display, char data);
+/**
+ * @brief 
+ * 
+ * @param display 
+ * @param data 
+ */
+void LinearDisplayPushChar(LinearDisplay_t* display, char data, uint8_t offShift);
 
-void LinearDisplayPushString(LinearDisplay_t* display, char* data);
+void LinearDisplayPushString(LinearDisplay_t* display, char* data, uint8_t size);
 
+//void LinearDisplayPushEmoji(LinearDisplay_t* display, enum Emoji emoji);
 /* TODO: support for 12x48 images. */
 
 void LinearDisplayClear(LinearDisplay_t* display);

@@ -45,7 +45,7 @@
 #include <lib/shifter/shifter.h>
 
 #define SEGMENT_ROWS 7
-#define SEGMENT_COLUMNS 24
+#define SEGMENT_COLUMNS 40
 
 
 /**
@@ -95,7 +95,6 @@ typedef struct Segment {
  * 
  * @param config Segment configuration.
  * @param segment Reference to a segment to make.
- * @return Segment_t Virtual segment instance.
  */
 void SegmentInit(SegmentConfig_t config, Segment_t* segment);
 

@@ -15,63 +15,52 @@
 #include <lib/font/tom-thumb_font.h>
 
 
-LinearDisplay_t LinearDisplayInit(LinearDisplayConfig_t config) {
-    LinearDisplay_t display;
-    return display;
+void LinearDisplayInit(LinearDisplayConfig_t config, LinearDisplay_t* display) {
+    
+    SegmentConfig_t segmentConfig = {
+        .segmentID      = 0,
+        .shifterConfig  = config.shifterConfig,
+        .rowPins        = {},
+        .timerID        = config.timerId,
+        .timerFreq      = 150
+    };
+
+    for (uint8_t i = 0; i < SEGMENT_ROWS; ++i) {
+        segmentConfig.rowPins[i] = config.rowPins[i];
+    }
+
+    SegmentInit(segmentConfig, &(display->segment));
+    display->displayTimer = display->segment.timer;
 }
 
-void LinearDisplayPushChar(LinearDisplay_t* display, char data) {
-    //sizeof(bitmap[data-32])/sizeof(char) // is this the size of a single row of bitmap?
-    uint8_t x = 0;
-    for (int i = 0; i < sizeof(bitmap[data-32])/sizeof(char); i++){//for loop by row
-        SegmentSetPixel(&(display->segments), i, (x+0)%SEGMENT_COLUMNS, bitmap[data-32][i]&(0x40)>>6);
-        SegmentSetPixel(&(display->segments), i, (x+1)%SEGMENT_COLUMNS, bitmap[data-32][i]&(0x20)>>5);
-        SegmentSetPixel(&(display->segments), i, (x+2)%SEGMENT_COLUMNS, bitmap[data-32][i]&(0x10)>>4);
-        SegmentSetPixel(&(display->segments), i, (x+3)%SEGMENT_COLUMNS, bitmap[data-32][i]&(0x08)>>3);
-        SegmentSetPixel(&(display->segments), i, (x+4)%SEGMENT_COLUMNS, bitmap[data-32][i]&(0x04)>>2);
-        SegmentSetPixel(&(display->segments), i, (x+5)%SEGMENT_COLUMNS, bitmap[data-32][i]&(0x02)>>1);
-        SegmentSetPixel(&(display->segments), i, (x+6)%SEGMENT_COLUMNS, bitmap[data-32][i]&(0x01)>>0);
-        // if (bitmap[data-32][i]&(0x40) == 1){
-        //     SegmentSetPixel(&(display->segments), i, (x+0)%SEGMENT_COLUMNS, 1);
-        // }
-        // if (bitmap[data-32][i]&(0x20) == 1){
-        //     SegmentSetPixel(&(display->segments), i, (x+1)%SEGMENT_COLUMNS, 1);
-        // }
-        // if (bitmap[data-32][i]<<2>>7 == 1){
-        //     SegmentSetPixel(&(display->segments), i, (x+2)%SEGMENT_COLUMNS, 1);
-        // }
-        // if (bitmap[data-32][i]<<3>>7 == 1){
-        //     SegmentSetPixel(&(display->segments), i, (x+3)%SEGMENT_COLUMNS, 1);
-        // }
-        // if (bitmap[data-32][i]<<4>>7 == 1){
-        //     SegmentSetPixel(&(display->segments), i, (x+4)%SEGMENT_COLUMNS, 1);
-        // }
-        // if (bitmap[data-32][i]<<5>>7 == 1){
-        //     SegmentSetPixel(&(display->segments), i, (x+5)%SEGMENT_COLUMNS, 1);
-        // }
-        // if (bitmap[data-32][i]<<6>>7 == 1){
-        //     SegmentSetPixel(&(display->segments), i, (x+6)%SEGMENT_COLUMNS, 1);
-        // }
+void LinearDisplayPushChar(LinearDisplay_t* display, char data, uint8_t offShift) {
+    for (int i = 0; i < CHAR_HEIGHT; i++){//for loop by row
+        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i, 0 + offShift*CHAR_WIDTH, (bitmap[data-32][i]>>7)&0x01);
+        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i, 1 + offShift*CHAR_WIDTH, (bitmap[data-32][i]>>6)&0x01);
+        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i, 2 + offShift*CHAR_WIDTH, (bitmap[data-32][i]>>5)&0x01);
+        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i, 3 + offShift*CHAR_WIDTH, (bitmap[data-32][i]>>4)&0x01);
+        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i, 4 + offShift*CHAR_WIDTH, (bitmap[data-32][i]>>3)&0x01);
+        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i, 5 + offShift*CHAR_WIDTH, (bitmap[data-32][i]>>2)&0x01);
+        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i, 6 + offShift*CHAR_WIDTH, (bitmap[data-32][i]>>1)&0x01);
+        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i, 7 + offShift*CHAR_WIDTH, (bitmap[data-32][i]>>0)&0x01);
     }
-    x = (x+1) % SEGMENT_COLUMNS;
-    DelayMillisec(250);
-    SegmentClear(&(display->segment));
 }
 
-void LinearDisplayPushString(LinearDisplay_t* display, char* data) {
-    for (int i = 0; data[i] != '\0'; i++){
-        LinearDisplayPushChar(display, data[i]);
+void LinearDisplayPushString(LinearDisplay_t* display, char* data, uint8_t size) {
+    for (int i = 0; i < size; i++){
+        LinearDisplayPushChar(display, data[i], i);
     }
 }
+
 
 /* TODO: support for 12x48 images. */
 
 void LinearDisplayClear(LinearDisplay_t* display) {
-
+    SegmentClear(&display->segment);
 }
 
 void LinearDisplayStart(LinearDisplay_t* display) {
-
+    SegmentStart(&display->segment);
 }
 
 void LinearDisplayStop(LinearDisplay_t* display) {
