@@ -34,15 +34,20 @@ void LinearDisplayInit(LinearDisplayConfig_t config, LinearDisplay_t* display) {
 }
 
 void LinearDisplayPushChar(LinearDisplay_t* display, char data, uint8_t offShift) {
+    uint8_t offset = 0; //default for seven pixel height
+    if ((data-32) >= 0 && (data-32) <95){
+        offset = -1;
+    } 
+
     for (int i = 0; i < CHAR_HEIGHT; i++){//for loop by row
-        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i, 0 + offShift*CHAR_WIDTH, (bitmap[data-32][i]>>7)&0x01);
-        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i, 1 + offShift*CHAR_WIDTH, (bitmap[data-32][i]>>6)&0x01);
-        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i, 2 + offShift*CHAR_WIDTH, (bitmap[data-32][i]>>5)&0x01);
-        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i, 3 + offShift*CHAR_WIDTH, (bitmap[data-32][i]>>4)&0x01);
-        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i, 4 + offShift*CHAR_WIDTH, (bitmap[data-32][i]>>3)&0x01);
-        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i, 5 + offShift*CHAR_WIDTH, (bitmap[data-32][i]>>2)&0x01);
-        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i, 6 + offShift*CHAR_WIDTH, (bitmap[data-32][i]>>1)&0x01);
-        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i, 7 + offShift*CHAR_WIDTH, (bitmap[data-32][i]>>0)&0x01);
+        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i + offset, 0 + offShift*(CHAR_WIDTH+1), (bitmap[data-32][i]>>7)&0x01);
+        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i + offset, 1 + offShift*(CHAR_WIDTH+1), (bitmap[data-32][i]>>6)&0x01);
+        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i + offset, 2 + offShift*(CHAR_WIDTH+1), (bitmap[data-32][i]>>5)&0x01);
+        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i + offset, 3 + offShift*(CHAR_WIDTH+1), (bitmap[data-32][i]>>4)&0x01);
+        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i + offset, 4 + offShift*(CHAR_WIDTH+1), (bitmap[data-32][i]>>3)&0x01);
+        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i + offset, 5 + offShift*(CHAR_WIDTH+1), (bitmap[data-32][i]>>2)&0x01);
+        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i + offset, 6 + offShift*(CHAR_WIDTH+1), (bitmap[data-32][i]>>1)&0x01);
+        SegmentSetPixel(&(display->segment), CHAR_HEIGHT-i + offset, 7 + offShift*(CHAR_WIDTH+1), (bitmap[data-32][i]>>0)&0x01);
     }
 }
 
