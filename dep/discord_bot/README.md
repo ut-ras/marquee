@@ -1,4 +1,4 @@
-**Discord Bot for the Marquee**
+# Discord Bot for the Marquee
 
 This is the code for the discord bot that controls the marquee. It runs off of a Flask backend.
 
