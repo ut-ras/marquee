@@ -64,6 +64,15 @@ int main(void) {
 
     uint8_t x = 0;
     while (true) {
+        /*
+        @...@.@@@@@
+        .@.@..@...@
+        ..@...@...@
+        ..@...@...@
+        .@.@..@...@
+        @...@.@@@@@
+        */
+        // X
         SegmentSetPixel(&segment, 0, (x+0)%SEGMENT_COLUMNS, 1);
         SegmentSetPixel(&segment, 1, (x+1)%SEGMENT_COLUMNS, 1);
         SegmentSetPixel(&segment, 2, (x+2)%SEGMENT_COLUMNS, 1);
@@ -77,6 +86,31 @@ int main(void) {
         SegmentSetPixel(&segment, 2, (x+4)%SEGMENT_COLUMNS, 1);
         SegmentSetPixel(&segment, 1, (x+5)%SEGMENT_COLUMNS, 1);
         SegmentSetPixel(&segment, 0, (x+6)%SEGMENT_COLUMNS, 1);
+
+        // O
+        SegmentSetPixel(&segment, 0, (x+0+6)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 0, (x+1+6)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 0, (x+2+6)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 0, (x+3+6)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 0, (x+4+6)%SEGMENT_COLUMNS, 1);
+        
+        SegmentSetPixel(&segment, 1, (x+0+6)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 1, (x+4+6)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 2, (x+0+6)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 2, (x+4+6)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 3, (x+0+6)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 3, (x+4+6)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 4, (x+0+6)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 4, (x+4+6)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 4, (x+0+6)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 4, (x+4+6)%SEGMENT_COLUMNS, 1);
+        
+        SegmentSetPixel(&segment, 6, (x+0+6)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 6, (x+1+6)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 6, (x+2+6)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 6, (x+3+6)%SEGMENT_COLUMNS, 1);
+        SegmentSetPixel(&segment, 6, (x+4+6)%SEGMENT_COLUMNS, 1);
+        
         x = (x+1) % SEGMENT_COLUMNS;
         DelayMillisec(250);
         SegmentClear(&segment);

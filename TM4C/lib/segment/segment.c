@@ -12,6 +12,26 @@
 #include <lib/segment/segment.h>
 #include <lib/shifter/shifter.h>
 
+uint8_t _colTable[14] = {
+    0b10101010,
+    0b01010101,
+
+    0b10010010,
+    0b01001001,
+    0b00100100,
+
+    0b10010010,
+    0b01001001,
+    0b10100100,
+    0b01010010,
+    0b00101001,
+
+    0b10001000,
+    0b01000100,
+    0b00100010,
+    0b00010001,
+};
+
 /**
  * @brief SegmentPublish Publishes the virtual segment state data to a physical
  * segment of the marquee. This shifts data into the HCF4094BE shift registers
@@ -20,25 +40,50 @@
  * @param seg Segment to publish data for.
  */
 void SegmentPublish(uint32_t* args) {
-    static uint8_t col = 0;
-    
-    if (col == 0) {
-        ShifterShiftIn(&((Segment_t*)args)->shifter, 1);
-    } else {
-        ShifterShiftIn(&((Segment_t*)args)->shifter, 0);    
-    }
-    
-    for (uint8_t row = 0; row < SEGMENT_ROWS; ++row) {
-        if (((Segment_t*)args)->state[row][col]) {
-            /* Rows are negative logic. */
-            GPIOSetBit(((Segment_t*)args)->rowPins[row], false);
-        } else {
-            GPIOSetBit(((Segment_t*)args)->rowPins[row], true);
+    static uint8_t idx = 0;
+
+//    for (uint8_t row = 0; row < SEGMENT_ROWS; ++row) {
+//        GPIOSetBit(((Segment_t*)args)->rowPins[row], true);
+//    }
+
+    uint8_t pattern = _colTable[idx];
+    for (uint8_t i = 0; i < SEGMENT_COLUMNS; ++i) {
+        bool bit = (pattern >> (i%8)) % 0x1; 
+        ShifterShiftIn(&((Segment_t*)args)->shifter, bit);
+        for (uint8_t j = 0; j < SEGMENT_ROWS; ++j) {
+            GPIOSetBit(((Segment_t*)args)->rowPins[j], false);
         }
+//        if (bit) {
+//            for (uint8_t j = 0; j < SEGMENT_ROWS; ++j) {
+//                if (((Segment_t*)args)->state[j][i]) {
+//                    GPIOSetBit(((Segment_t*)args)->rowPins[j], false);
+//                }
+//            }
+//        }
     }
 
+    idx = (idx + 1) % 1;
+
+
+    // static uint8_t col = 0;
     
-    col = (col + 1) % SEGMENT_COLUMNS;
+    // if (col == 0) {
+    //     ShifterShiftIn(&((Segment_t*)args)->shifter, 1);
+    // } else {
+    //     ShifterShiftIn(&((Segment_t*)args)->shifter, 0);    
+    // }
+    
+    // for (uint8_t row = 0; row < SEGMENT_ROWS; ++row) {
+    //     if (((Segment_t*)args)->state[row][col]) {
+    //         /* Rows are negative logic. */
+    //         GPIOSetBit(((Segment_t*)args)->rowPins[row], false);
+    //     } else {
+    //         GPIOSetBit(((Segment_t*)args)->rowPins[row], true);
+    //     }
+    // }
+
+    
+    // col = (col + 1) % SEGMENT_COLUMNS;
 }
 
 void SegmentInit(SegmentConfig_t config, Segment_t* segment) {

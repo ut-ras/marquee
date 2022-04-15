@@ -66,7 +66,7 @@ int main(void) {
 
     while (true) {
         SegmentPublish((uint32_t*)&(display.segment));
-        DelayMicrosec(100);
+        DelayMillisec(5000);
     }
 
     return 1;

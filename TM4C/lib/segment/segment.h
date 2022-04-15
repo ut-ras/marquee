@@ -45,7 +45,7 @@
 #include <lib/shifter/shifter.h>
 
 #define SEGMENT_ROWS 7
-#define SEGMENT_COLUMNS 40
+#define SEGMENT_COLUMNS 10 
 
 
 /**
