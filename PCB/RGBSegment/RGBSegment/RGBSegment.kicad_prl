@@ -72,27 +72,15 @@
   "project": {
     "files": [
       {
-        "name": "RGBSegment.kicad_pcb",
+        "name": "RGBSegment.kicad_sch",
         "open": false,
         "window": {
-          "display": 1,
+          "display": 0,
           "maximized": false,
-          "pos_x": 953,
-          "pos_y": -1080,
-          "size_x": 974,
-          "size_y": 1057
-        }
-      },
-      {
-        "name": "RGBSegment.kicad_sch",
-        "open": true,
-        "window": {
-          "display": 1,
-          "maximized": true,
-          "pos_x": -8,
-          "pos_y": -1088,
-          "size_x": 1936,
-          "size_y": 1066
+          "pos_x": 922,
+          "pos_y": 0,
+          "size_x": 943,
+          "size_y": 1087
         }
       }
     ]
